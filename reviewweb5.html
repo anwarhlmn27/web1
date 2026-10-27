@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Test: Register, Login, & PDO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+        }
+
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .question-number {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+
+        code {
+            background-color: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #db2777;
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-label:hover {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+
+        .option-input {
+            margin-top: 0.25rem;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .option-text {
+            flex-grow: 1;
+        }
+
+        /* State Classes for Validation */
+        .option-label.correct {
+            border-color: var(--success);
+            background-color: #f0fdf4;
+        }
+
+        .option-label.incorrect {
+            border-color: var(--danger);
+            background-color: #fef2f2;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 2rem;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .submit-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border-top: 8px solid var(--primary);
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 1rem 0;
+        }
+
+        .feedback-text {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Post Test: PHP Native & PDO</h1>
+        <p>Evaluasi pemahaman materi Register, Login, Logout, dan Penggunaan PDO</p>
+    </div>
+
+    <div id="resultBox" class="result-container">
+        <h2>Hasil Evaluasi</h2>
+        <div class="score-display">Nilai: <span id="scoreText">0</span>/100</div>
+        <p class="feedback-text" id="feedbackText"></p>
+        <button class="submit-btn" style="margin-top: 1.5rem; width: auto; display: inline-block; padding: 0.75rem 2rem;" onclick="location.reload()">Coba Lagi</button>
+    </div>
+
+    <form id="quizForm">
+        <!-- Question 1 -->
+        <div class="quiz-card" id="q1-card">
+            <div class="question-number">Soal 1</div>
+            <div class="question-text">Apa fungsi utama dari variabel <code>$pdo</code> dalam arsitektur aplikasi berbasis PHP?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q1" value="A" class="option-input"> <span class="option-text">Menyimpan data password pengguna yang sudah di-hash.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q1" value="B" class="option-input"> <span class="option-text">Sebagai tabel sementara untuk menampung data login.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q1" value="C" class="option-input"> <span class="option-text">Sebagai jembatan koneksi/komunikasi antara PHP dan database MySQL.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q1" value="D" class="option-input"> <span class="option-text">Menangkap data inputan form dari atribut method="POST".</span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="quiz-card" id="q2-card">
+            <div class="question-number">Soal 2</div>
+            <div class="question-text">Untuk alasan keamanan, fungsi PHP bawaan manakah yang direkomendasikan untuk mengenkripsi password sebelum disimpan ke tabel database?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q2" value="A" class="option-input"> <span class="option-text"><code>password_verify()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q2" value="B" class="option-input"> <span class="option-text"><code>password_hash()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q2" value="C" class="option-input"> <span class="option-text"><code>session_start()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q2" value="D" class="option-input"> <span class="option-text"><code>md5()</code></span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="quiz-card" id="q3-card">
+            <div class="question-number">Soal 3</div>
+            <div class="question-text">Dalam proses alur login, bagaimana cara mencocokkan password yang diketik oleh pengguna dengan password acak yang ada di database?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q3" value="A" class="option-input"> <span class="option-text">Menggunakan perintah <code>SELECT * FROM users WHERE password = :password</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q3" value="B" class="option-input"> <span class="option-text">Menggunakan fungsi <code>password_verify()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q3" value="C" class="option-input"> <span class="option-text">Menggunakan logika perbandingan ganda (==)</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q3" value="D" class="option-input"> <span class="option-text">Mendekripsi hash menggunakan <code>password_unhash()</code></span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="quiz-card" id="q4-card">
+            <div class="question-number">Soal 4</div>
+            <div class="question-text">Dalam file <code>auth.php</code>, terdapat mekanisme percabangan (if-elseif). Apa peran utama dari variabel <code>$action</code> (misal: <code>$_POST['action']</code>) pada file tersebut?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q4" value="A" class="option-input"> <span class="option-text">Menentukan status berhasil atau gagalnya sebuah query.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q4" value="B" class="option-input"> <span class="option-text">Menghapus data session secara otomatis saat dipanggil.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q4" value="C" class="option-input"> <span class="option-text">Menentukan function spesifik mana (register, login, atau logout) yang harus dijalankan.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q4" value="D" class="option-input"> <span class="option-text">Menyimpan pesan error (exception) dari PDO.</span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="quiz-card" id="q5-card">
+            <div class="question-number">Soal 5</div>
+            <div class="question-text">Bagaimana cara paling tepat untuk menjaga status login pengguna agar tetap dikenali ketika mereka berpindah ke halaman <code>dashboard.php</code>?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q5" value="A" class="option-input"> <span class="option-text">Menyimpan ID atau identitas pengguna menggunakan <code>$_SESSION</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q5" value="B" class="option-input"> <span class="option-text">Menyimpan variabel <code>$pdo</code> di dalam form tersembunyi</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q5" value="C" class="option-input"> <span class="option-text">Menambahkan nama pengguna ke dalam URL (metode GET) secara manual</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q5" value="D" class="option-input"> <span class="option-text">Mengirim ulang form login di setiap perpindahan halaman</span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="quiz-card" id="q6-card">
+            <div class="question-number">Soal 6</div>
+            <div class="question-text">Superglobal array apa yang digunakan di PHP untuk menangkap data sensitif (seperti password) yang dikirim dari HTML form dengan <code>method="POST"</code>?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q6" value="A" class="option-input"> <span class="option-text"><code>$_GET</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q6" value="B" class="option-input"> <span class="option-text"><code>$_SESSION</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q6" value="C" class="option-input"> <span class="option-text"><code>$_PDO</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q6" value="D" class="option-input"> <span class="option-text"><code>$_POST</code></span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="quiz-card" id="q7-card">
+            <div class="question-number">Soal 7</div>
+            <div class="question-text">Kombinasi metode PDO apa yang digunakan untuk mencegah celah keamanan (seperti SQL Injection) saat menyisipkan data user baru ke database?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q7" value="A" class="option-input"> <span class="option-text"><code>prepare()</code> dan <code>execute()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q7" value="B" class="option-input"> <span class="option-text"><code>query()</code> dan <code>fetch()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q7" value="C" class="option-input"> <span class="option-text"><code>insert()</code> dan <code>update()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q7" value="D" class="option-input"> <span class="option-text"><code>setAttribute()</code> dan <code>catch()</code></span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="quiz-card" id="q8-card">
+            <div class="question-number">Soal 8</div>
+            <div class="question-text">Di bagian atas file <code>dashboard.php</code>, terdapat blok kode: <code>if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }</code>. Apa tujuan kode tersebut?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q8" value="A" class="option-input"> <span class="option-text">Mengubah password pengguna secara paksa.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q8" value="B" class="option-input"> <span class="option-text">Melindungi halaman dashboard dengan melempar (redirect) tamu yang belum login kembali ke form login.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q8" value="C" class="option-input"> <span class="option-text">Mencetak pesan error ke layar putih kosong jika login gagal.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q8" value="D" class="option-input"> <span class="option-text">Menghapus sesi pengguna lama dan memulai sesi baru.</span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 9 -->
+        <div class="quiz-card" id="q9-card">
+            <div class="question-number">Soal 9</div>
+            <div class="question-text">Saat pengguna menekan tombol Logout, fungsi bawaan PHP apa yang dipanggil oleh <code>logoutUser()</code> untuk mematikan status login mereka secara tuntas?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q9" value="A" class="option-input"> <span class="option-text"><code>session_start()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q9" value="B" class="option-input"> <span class="option-text"><code>password_verify()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q9" value="C" class="option-input"> <span class="option-text"><code>session_destroy()</code></span></label></li>
+                <li><label class="option-label"><input type="radio" name="q9" value="D" class="option-input"> <span class="option-text"><code>$_SESSION = null;</code></span></label></li>
+            </ul>
+        </div>
+
+        <!-- Question 10 -->
+        <div class="quiz-card" id="q10-card">
+            <div class="question-number">Soal 10</div>
+            <div class="question-text">Apa kegunaan dari metode <code>fetch()</code> pada objek <code>$stmt</code> PDO setelah sebuah query SELECT dijalankan?</div>
+            <ul class="options-list">
+                <li><label class="option-label"><input type="radio" name="q10" value="A" class="option-input"> <span class="option-text">Mempersiapkan struktur query dasar tanpa data asli.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q10" value="B" class="option-input"> <span class="option-text">Mengambil baris data (record) hasil query dari database dan merubahnya menjadi array PHP.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q10" value="C" class="option-input"> <span class="option-text">Mengirimkan data form HTML secara langsung ke dalam tabel.</span></label></li>
+                <li><label class="option-label"><input type="radio" name="q10" value="D" class="option-input"> <span class="option-text">Memeriksa apakah ada error saat menjalankan query.</span></label></li>
+            </ul>
+        </div>
+
+        <button type="button" id="submitBtn" class="submit-btn" onclick="gradeQuiz()">Selesai & Cek Nilai</button>
+    </form>
+</div>
+
+<script>
+    // Kunci Jawaban
+    const answers = {
+        q1: 'C',
+        q2: 'B',
+        q3: 'B',
+        q4: 'C',
+        q5: 'A',
+        q6: 'D',
+        q7: 'A',
+        q8: 'B',
+        q9: 'C',
+        q10: 'B'
+    };
+
+    function gradeQuiz() {
+        const form = document.getElementById('quizForm');
+        let score = 0;
+        let answeredQuestions = 0;
+        const totalQuestions = Object.keys(answers).length;
+
+        // Reset visual states
+        document.querySelectorAll('.option-label').forEach(label => {
+            label.classList.remove('correct', 'incorrect');
+        });
+
+        for (let key in answers) {
+            const options = form.elements[key];
+            let selectedValue = null;
+            
+            // Find selected radio
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].checked) {
+                    selectedValue = options[i].value;
+                    answeredQuestions++;
+                    break;
+                }
+            }
+
+            // Grade and Apply UI styling
+            if (selectedValue === answers[key]) {
+                score += 10;
+            }
+
+            // Highlight Correct and Incorrect selections
+            for (let i = 0; i < options.length; i++) {
+                const label = options[i].closest('.option-label');
+                
+                // Always highlight the correct answer in green
+                if (options[i].value === answers[key]) {
+                    label.classList.add('correct');
+                }
+                
+                // If user selected this and it's wrong, highlight in red
+                if (options[i].checked && selectedValue !== answers[key]) {
+                    label.classList.add('incorrect');
+                }
+                
+                // Disable inputs after submission
+                options[i].disabled = true;
+            }
+        }
+
+        if(answeredQuestions < totalQuestions) {
+            alert("Harap jawab semua soal terlebih dahulu!");
+            // Re-enable inputs if not fully answered
+            document.querySelectorAll('.option-input').forEach(input => input.disabled = false);
+            document.querySelectorAll('.option-label').forEach(label => label.classList.remove('correct', 'incorrect'));
+            return;
+        }
+
+        // Show results
+        document.getElementById('resultBox').style.display = 'block';
+        document.getElementById('scoreText').innerText = score;
+        document.getElementById('submitBtn').style.display = 'none';
+
+        // Feedback text based on score
+        const feedbackEl = document.getElementById('feedbackText');
+        if(score >= 80) {
+            feedbackEl.innerText = "Luar biasa! Pemahaman teori Anda tentang struktur Login dan PDO sangat kuat.";
+        } else if (score >= 60) {
+            feedbackEl.innerText = "Cukup baik, tapi ada beberapa konsep alur kerja yang masih perlu di-review ulang.";
+        } else {
+            feedbackEl.innerText = "Silakan pelajari kembali slide presentasi dan materi PDF tentang alur Register/Login.";
+        }
+
+        // Scroll to top to see results
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>

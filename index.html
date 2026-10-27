@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamental JavaScript Modern untuk Mobile Development</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-yellow: #facc15;
+            --accent-red: #f87171;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: #090d16;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        /* Slide Container */
+        .presentation-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            max-width: 1100px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header Elements */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--accent-blue);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Content Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .card h3 {
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .card p, .card ul {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #f43f5e; }
+        .function { color: #38bdf8; }
+        .string { color: #4ade80; }
+        .comment { color: #64748b; font-style: italic; }
+        .operator { color: #facc15; }
+
+        /* Interactive Quiz */
+        .quiz-option {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--accent-green);
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--accent-green);
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--accent-red);
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--accent-red);
+        }
+
+        /* Bottom Controls */
+        .controls {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Timeline / Agenda */
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .time-badge {
+            background: var(--accent-blue);
+            color: #0f172a;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-right: 1rem;
+            min-width: 80px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <span class="badge">Mobile Programming 1 • Teori 2 SKS</span>
+            <h1>Fundamental JavaScript Modern (ES6+)</h1>
+            <p class="subtitle">Konsep Inti & Mental Model untuk Pengembangan Aplikasi Mobile dengan React Native</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>📍 Informasi Perkuliahan</h3>
+                    <ul>
+                        <li><strong>Durasi:</strong> 100 Menit (Ruang Teori)</li>
+                        <li><strong>Program Studi:</strong> Informatika</li>
+                        <li><strong>Institusi:</strong> Horizon University Indonesia</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🎯 Target Sesi Ini</h3>
+                    <ul>
+                        <li>Memahami mutabilitas & scope variabel</li>
+                        <li>Menguasai sintaks modern ES6+ inti</li>
+                        <li>Mampu melakukan <i>code tracing</i> ke React Native</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Agenda -->
+        <div class="slide">
+            <h2>⏱️ Agenda & Alokasi Waktu (100 Menit)</h2>
+            <div class="timeline-item">
+                <span class="time-badge">10 Menit</span>
+                <div><strong>Ice Breaking & Review:</strong> JavaScript Jargon Race & apersepsi dasar.</div>
+            </div>
+            <div class="timeline-item">
+                <span class="time-badge">25 Menit</span>
+                <div><strong>Modul 1: Variabel & Scope:</strong> Memahami <code>const</code>, <code>let</code> vs <code>var</code> & Mutability.</div>
+            </div>
+            <div class="timeline-item">
+                <span class="time-badge">35 Menit</span>
+                <div><strong>Modul 2: ES6 Core for React:</strong> Arrow Function, Template Literals, Destructuring, & <code>map()</code>.</div>
+            </div>
+            <div class="timeline-item">
+                <span class="time-badge">20 Menit</span>
+                <div><strong>Modul 3: React Native Connection:</strong> Code tracing komponen <code>App.js</code>.</div>
+            </div>
+            <div class="timeline-item">
+                <span class="time-badge">10 Menit</span>
+                <div><strong>Wrap Up & Quiz:</strong> Evaluasi cepat & pembagian kelompok praktikum lab.</div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Scope Variabel -->
+        <div class="slide">
+            <h2>📦 Modul 1: Variabel & Scope Control</h2>
+            <p class="subtitle">Mengapa <code>var</code> Ditinggalkan dalam Pemrograman React Native Modern?</p>
+            <div class="grid-3">
+                <div class="card">
+                    <h3 style="color: var(--accent-red);">var (Deprecated)</h3>
+                    <ul>
+                        <li><strong>Scope:</strong> Function / Global</li>
+                        <li>Bocor keluar dari block <code>{ }</code></li>
+                        <li>Rawan memicu bug rendering</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-yellow);">let (Mutable)</h3>
+                    <ul>
+                        <li><strong>Scope:</strong> Block Scope <code>{ }</code></li>
+                        <li>Nilai dapat diubah kembali</li>
+                        <li>Cocok untuk counter / data temporer</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-green);">const (Standard)</h3>
+                    <ul>
+                        <li><strong>Scope:</strong> Block Scope <code>{ }</code></li>
+                        <li>Nilai tidak bisa di-reassign</li>
+                        <li>Standard komponen, state, & props</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 1rem; background: rgba(56, 189, 248, 0.05);">
+                <strong>💡 Analogi Papan Tulis:</strong> <code>var</code> ibarat kardus terbuka di lorong umum. <code>let</code> ibarat laci meja kamar. <code>const</code> ibarat brankas kaca terkunci.
+            </div>
+        </div>
+
+        <!-- Slide 4: Dry Run Scope -->
+        <div class="slide">
+            <h2>✏️ Latihan Papan Tulis: Human Compiler</h2>
+            <p class="subtitle">Mari analisa eksekusi kode berikut bersama-sama:</p>
+            <div class="grid-2">
+                <div>
+                    <pre><span class="comment">// Kasus 1: Block Scope</span>
+<span class="keyword">if</span> (<span class="keyword">true</span>) {
+    <span class="keyword">var</span> x = <span class="string">"Bocor!"</span>;
+    <span class="keyword">let</span> y = <span class="string">"Tergembok!"</span>;
+}
+
+console.log(x); <span class="comment">// Output: ?</span>
+console.log(y); <span class="comment">// Output: ?</span></pre>
+                </div>
+                <div>
+                    <pre><span class="comment">// Kasus 2: Re-assignment</span>
+<span class="keyword">const</span> userRole = <span class="string">"Mahasiswa"</span>;
+userRole = <span class="string">"Dosen"</span>; 
+
+<span class="comment">// Output: ?</span></pre>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 1rem;">
+                <h3>🔍 Analisis Jawaban:</h3>
+                <ul>
+                    <li>Kasus 1: <code>x</code> mencetak <strong>"Bocor!"</strong> karena <code>var</code> mengabaikan block. <code>y</code> menghasilkan <strong>ReferenceError</strong>.</li>
+                    <li>Kasus 2: Menghasilkan <strong>TypeError: Assignment to constant variable</strong>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Arrow Functions -->
+        <div class="slide">
+            <h2>⚡ Modul 2: Transformasi Arrow Function</h2>
+            <p class="subtitle">Menulis fungsi UI yang lebih ringkas dan deklaratif</p>
+            <div class="grid-2">
+                <div>
+                    <h3>Sintaks Konvensional (ES5)</h3>
+                    <pre><span class="keyword">function</span> <span class="function">HitungLuas</span>(a, t) {
+    <span class="keyword">return</span> 0.5 * a * t;
+}</pre>
+                </div>
+                <div>
+                    <h3>Arrow Function (ES6+)</h3>
+                    <pre><span class="keyword">const</span> <span class="function">HitungLuas</span> = (a, t) => 0.5 * a * t;</pre>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3>🚀 Keunggulan dalam React Native:</h3>
+                <ul>
+                    <li><strong>Implicit Return:</strong> Tidak membutuhkan <code>return</code> jika hanya berupa ekspresi 1 baris.</li>
+                    <li><strong>Lexical 'this':</strong> Mengikat konteks <code>this</code> secara otomatis untuk event handler tombol.</li>
+                    <li><strong>Functional Component Standard:</strong> Menjadi standar utama pembuatan komponen UI.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Template Literals & Destructuring -->
+        <div class="slide">
+            <h2>🎨 Template Literals & Destructuring</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>1. Template Literals (``)</h3>
+                    <p>Wajib menggunakan backtick untuk menggabungkan string dan variabel secara bersih:</p>
+                    <pre><span class="keyword">const</span> nama = <span class="string">"Deden"</span>;
+<span class="keyword">const</span> umr = 25;
+
+<span class="comment">// ES6 Interpolation</span>
+<span class="keyword">const</span> text = <span class="string">`Nama: ${nama}, Umur: ${umr}`</span>;</pre>
+                </div>
+                <div>
+                    <h3>2. Object Destructuring</h3>
+                    <p>Mengekstrak properti objek langsung ke dalam variabel terpisah:</p>
+                    <pre><span class="keyword">const</span> user = { name: <span class="string">"Deden"</span>, role: <span class="string">"Mhs"</span> };
+
+<span class="comment">// Destructuring langsung</span>
+<span class="keyword">const</span> { name, role } = user;</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Bridging to React Native Props -->
+        <div class="slide">
+            <h2>🌉 Bridging to React Native: Props & State</h2>
+            <p class="subtitle">Penerapan langsung ES6 Destructuring pada Komponen Mobile</p>
+            <div class="grid-2">
+                <div>
+                    <h3>❌ Tanpa Destructuring</h3>
+                    <pre><span class="keyword">const</span> UserCard = (props) => {
+  <span class="keyword">return</span> (
+    &lt;<span class="function">Text</span>&gt;
+      {props.nama} - {props.role}
+    &lt;/<span class="function">Text</span>&gt;
+  );
+};</pre>
+                </div>
+                <div>
+                    <h3>✅ Standar React Native (Destructuring)</h3>
+                    <pre><span class="keyword">const</span> UserCard = ({ nama, role }) => {
+  <span class="keyword">return</span> (
+    &lt;<span class="function">Text</span>&gt;
+      {nama} - {role}
+    &lt;/<span class="function">Text</span>&gt;
+  );
+};</pre>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 1rem;">
+                <strong>📌 Destructuring React Hooks:</strong> <code>const [isLogin, setIsLogin] = useState(false);</code>
+            </div>
+        </div>
+
+        <!-- Slide 8: Conditional UI -->
+        <div class="slide">
+            <h2>🔀 Logic & Flow Control untuk Tampilan UI</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>1. Ternary Operator (If-Else)</h3>
+                    <p>Sangat ideal untuk memilih 2 tampilan UI berdasarkan kondisi:</p>
+                    <pre><span class="comment">// kondisi ? true : false</span>
+&lt;<span class="function">Text</span>&gt;
+  {isStudent ? <span class="string">"Aktif"</span> : <span class="string">"Alumni"</span>}
+&lt;/<span class="function">Text</span>&gt;</pre>
+                </div>
+                <div class="card">
+                    <h3>2. Logical AND (&&)</h3>
+                    <p>Renders elemen UI hanya jika kondisi terpenuhi:</p>
+                    <pre><span class="comment">// Jika isLogin true, tampilkan komponen</span>
+{isLogin && &lt;<span class="function">Dashboard</span> /&gt;}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Array Map -->
+        <div class="slide">
+            <h2>🗺️ Array Mapping untuk List UI</h2>
+            <p class="subtitle">Di React Native, kita tidak memakai <code>for</code> loop untuk merender daftar data</p>
+            <pre><span class="keyword">const</span> hobbies = [<span class="string">"Coding"</span>, <span class="string">"Gaming"</span>, <span class="string">"Reading"</span>];
+
+<span class="keyword">return</span> (
+  &lt;<span class="function">View</span>&gt;
+    {hobbies.<span class="function">map</span>((item, index) => (
+      &lt;<span class="function">Text</span> key={index}&gt;
+        Hobi {index + 1}: {item}
+      &lt;/<span class="function">Text</span>&gt;
+    ))}
+  &lt;/<span class="function">View</span>&gt;
+);</pre>
+        </div>
+
+        <!-- Slide 10: Code Tracing -->
+        <div class="slide">
+            <h2>🔍 Bedah Kode React Native (App.js)</h2>
+            <pre><span class="keyword">import</span> { Text, View } <span class="keyword">from</span> <span class="string">'react-native'</span>;
+
+<span class="keyword">export default function</span> <span class="function">App</span>() {
+  <span class="keyword">let</span> alas = 10;
+  <span class="keyword">let</span> tinggi = 5;
+  <span class="keyword">const</span> setengah = 0.5;
+
+  <span class="keyword">const</span> hitungLuas = (a, t) => setengah * a * t;
+  <span class="keyword">let</span> luas = hitungLuas(alas, tinggi);
+
+  <span class="keyword">return</span> (
+    &lt;<span class="function">View</span> style={{ flex: 1, justifyContent: <span class="string">'center'</span>, alignItems: <span class="string">'center'</span> }}&gt;
+      &lt;<span class="function">Text</span>&gt;
+        {<span class="string">`Luas segitiga alas ${alas} & tinggi ${tinggi} adalah ${luas}`</span>}
+      &lt;/<span class="function">Text</span>&gt;
+    &lt;/<span class="function">View</span>&gt;
+  );
+}</pre>
+        </div>
+
+        <!-- Slide 11: Quiz Interaktif -->
+        <div class="slide">
+            <h2>🧪 Evaluasi Pemahaman Cepat</h2>
+            <p class="subtitle">Manakah sintaks Template Literal yang valid di dalam JSX React Native?</p>
+            <div class="quiz-option" onclick="checkAnswer(this, false)">
+                A. &lt;Text&gt;{'Hasil: ${hasil}'}&lt;/Text&gt;
+            </div>
+            <div class="quiz-option" onclick="checkAnswer(this, true)">
+                B. &lt;Text&gt;{`Hasil: ${hasil}`}&lt;/Text&gt;
+            </div>
+            <div class="quiz-option" onclick="checkAnswer(this, false)">
+                C. &lt;Text&gt;"Hasil: ${hasil}"&lt;/Text&gt;
+            </div>
+            <div id="quiz-feedback" style="margin-top: 1rem; font-weight: 600;"></div>
+        </div>
+
+        <!-- Slide 12: Penutup -->
+        <div class="slide">
+            <h2>📋 Persiapan Sesi Praktikum Lab</h2>
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <h3>Pembagian Topik Kelompok:</h3>
+                <div class="grid-2">
+                    <ul>
+                        <li><strong>Kelompok 1:</strong> Classes vs Functional</li>
+                        <li><strong>Kelompok 2:</strong> Arrow Functions</li>
+                        <li><strong>Kelompok 3:</strong> Scope (let vs const)</li>
+                        <li><strong>Kelompok 4:</strong> Array Map List</li>
+                    </ul>
+                    <ul>
+                        <li><strong>Kelompok 5:</strong> Destructuring Props</li>
+                        <li><strong>Kelompok 6:</strong> ES Modules</li>
+                        <li><strong>Kelompok 7:</strong> Ternary Rendering</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="text-align: center; color: var(--accent-blue); font-weight: 600;">
+                Sampai jumpa di Sesi Praktikum Lab! Persiapkan environment Expo / Node.js Anda.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="controls">
+        <button class="btn" id="prevBtn" onclick="changeSlide(-1)">← Sebelumnya</button>
+        <span class="slide-number" id="slideNum">Slide 1 dari 12</span>
+        <button class="btn" id="nextBtn" onclick="changeSlide(1)">Selanjutnya →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const slideNumDisplay = document.getElementById('slideNum');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            slideNumDisplay.textContent = `Slide ${currentSlide + 1} dari ${slides.length}`;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+            updateSlide();
+        }
+
+        function checkAnswer(element, isCorrect) {
+            const feedback = document.getElementById('quiz-feedback');
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+            });
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                feedback.style.color = 'var(--accent-green)';
+                feedback.textContent = '✅ Benar! Interpolasi JavaScript di JSX wajib dibungkus kurung kurawal {} dan menggunakan backtick ``.';
+            } else {
+                element.classList.add('wrong');
+                feedback.style.color = 'var(--accent-red)';
+                feedback.textContent = '❌ Kurang tepat. Penggunaan petik tunggal (\') atau petik ganda (") tidak akan mengevaluasi ${}.';
+            }
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                if (currentSlide < slides.length - 1) changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                if (currentSlide > 0) changeSlide(-1);
+            }
+        });
+
+        updateSlide();
+    </script>
+</body>
+</html>

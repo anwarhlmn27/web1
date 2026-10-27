@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi: Pengenalan PHP & Koneksi Database PDO</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #3730A3;
+            --bg-dark: #0F172A;
+            --card-bg: #1E293B;
+            --text-light: #F8FAFC;
+            --text-muted: #94A3B8;
+            --accent: #10B981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 90vw;
+            max-width: 1000px;
+            height: 70vh;
+            max-height: 600px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .slide-container.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-header {
+            border-bottom: 2px solid #334155;
+            padding-bottom: 15px;
+        }
+
+        .slide-title {
+            font-size: 1.8rem;
+            color: #6366F1;
+        }
+
+        .slide-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .slide-body {
+            flex-grow: 1;
+            margin-top: 20px;
+            overflow-y: auto;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        pre {
+            background-color: #090D16;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #A5B4FC;
+            border: 1px solid #334155;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90vw;
+            max-width: 1000px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn:disabled {
+            background-color: #334155;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #334155;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #0F172A;
+            color: #6366F1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Slide 1 -->
+    <div class="slide-container active">
+        <div class="slide-header">
+            <h1 class="slide-title">Pengenalan PHP & Koneksi Database PDO</h1>
+            <p class="slide-subtitle">Memahami Pemrosesan Server-Side, Architecture Flow, dan Keamanan Database</p>
+        </div>
+        <div class="slide-body"
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <h2 style="font-size: 2rem; color: var(--accent); margin-bottom: 15px;">Pemrograman Web Lanjutan</h2>
+            <p style="max-width: 600px; color: var(--text-muted);">
+                Panduan praktis alur kerja arsitektur Web Server, eksekusi skrip PHP Native, koneksi MySQL menggunakan
+                PDO, dan pencegahan celah SQL Injection.
+            </p>
+        </div>
+        <div class="slide-number">Slide 1 dari 6</div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide-container">
+        <div class="slide-header">
+            <h1 class="slide-title">Konsep Pemrosesan Server-Side</h1>
+            <p class="slide-subtitle">Peran PHP dalam Arsitektur Aplikasi Web</p>
+        </div>
+        <div class="slide-body">
+            <ul>
+                <li><span class="highlight">Server-Side Execution:</span> Kode PHP dieksekusi sepenuhnya di server web,
+                    bukan di browser pengguna.</li>
+                <li><span class="highlight">Output Dinamis:</span> Mengubah logika aplikasi dan data dari database
+                    menjadi struktur dokumen HTML murni sebelum dikirim ke client.</li>
+                <li><span class="highlight">Manajemen Sesi & Logika Bisnis:</span> Menangani verifikasi autentikasi
+                    user, keamanan form, dan operasi CRUD.</li>
+                <li><span class="highlight">Keamanan Source Code:</span> Browser client tidak pernah melihat sintaks
+                    logika PHP atau kredensial database.</li>
+            </ul>
+        </div>
+        <div class="slide-number">Slide 2 dari 6</div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide-container">
+        <div class="slide-header">
+            <h1 class="slide-title">Alur Data: Request ke Database Response</h1>
+            <p class="slide-subtitle">5 Tahapan Utama Siklus Pemrosesan Web</p>
+        </div>
+        <div class="slide-body">
+            <ol style="margin-left: 20px;">
+                <li><strong>HTTP Request:</strong> User melakukan aksi di browser (misal: kirim form atau akses URL).
+                </li>
+                <li><strong>Web Server Interception:</strong> Web Server (Apache/Nginx) menerima request dan meneruskan
+                    file `.php` ke PHP Engine.</li>
+                <li><strong>PHP Execution & DB Handshake:</strong> PHP mengeksekusi script, membuka koneksi PDO ke Port
+                    3306 MySQL.</li>
+                <li><strong>Database Querying:</strong> Database Server mengeksekusi query dan mengembalikan kueri data
+                    ke PHP.</li>
+                <li><strong>HTML Rendering:</strong> PHP menyusun data ke template HTML dan mengirimkan hasil akhirnya
+                    sebagai HTTP Response ke browser.</li>
+            </ol>
+        </div>
+        <div class="slide-number">Slide 3 dari 6</div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide-container">
+        <div class="slide-header">
+            <h1 class="slide-title">Inisialisasi Koneksi PDO Modern</h1>
+            <p class="slide-subtitle">Best Practice Kode Koneksi Database Native</p>
+        </div>
+        <div class="slide-body">
+            <pre>
+$dsn = "mysql:host=localhost;dbname=db_aplikasi;charset=utf8mb4";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+
+try {
+    $pdo = new PDO($dsn, 'root', '', $options);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    $db_error = "Terjadi kendala koneksi server database.";
+}
+</pre>
+        </div>
+        <div class="slide-number">Slide 4 dari 6</div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide-container">
+        <div class="slide-header">
+            <h1 class="slide-title">Keamanan Prepared Statement</h1>
+            <p class="slide-subtitle">Mengapa Prepared Statement Menangkal SQL Injection?</p>
+        </div>
+        <div class="slide-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Query String Biasa (Rentan)</th>
+                        <th>Prepared Statement PDO (Aman)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Proses Query</strong></td>
+                        <td>String SQL digabung langsung variabel</td>
+                        <td>Struktur SQL di-prepare terpisah dari data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Input Peretas</strong></td>
+                        <td>Dianggap sebagai sintaks logika SQL tambahan</td>
+                        <td>Diperlakukan murni sebagai teks/literal string</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ketahanan</strong></td>
+                        <td>Rentan jebol pola `' OR '1'='1`</td>
+                        <td>100% Aman dari manipulasi logika SQL</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">Slide 5 dari 6</div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide-container">
+        <div class="slide-header">
+            <h1 class="slide-title">Ringkasan & Kesimpulan</h1>
+            <p class="slide-subtitle">Poin Utama Pemrograman Web Berbasis PDO</p>
+        </div>
+        <div class="slide-body">
+            <ul>
+                <li>Gunakan <span class="highlight">PDO (PHP Data Objects)</span> untuk standar pengembangan aplikasi
+                    berorientasi objek dan dukungan multi-database.</li>
+                <li>Pastikan selalu mengaktifkan <span class="highlight">Prepared Statement</span> native
+                    (`ATTR_EMULATE_PREPARES => false`) untuk menjamin keamanan dari celah SQL Injection.</li>
+                <li>Pisahkan penanganan <span class="highlight">Error Log</span> internal teknis server dari pesan
+                    kesalahan yang ramah pengguna pada halaman interface (View).</li>
+            </ul>
+        </div>
+        <div class="slide-number">Slide 6 dari 6</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn" id="prevBtn" onclick="changeSlide(-1)">Sebelumnya</button>
+        <button class="btn" id="nextBtn" onclick="changeSlide(1)">Selanjutnya</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-container');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === slides.length - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+            showSlide(currentSlide);
+        }
+
+        // Navigasi Keyboard (Panah Kiri/Kanan)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) {
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft' && currentSlide > 0) {
+                changeSlide(-1);
+            }
+        });
+
+        // Inisialisasi awal
+        showSlide(currentSlide);
+    </script>
+</body>
+
+</html>
